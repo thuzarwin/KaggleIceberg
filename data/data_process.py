@@ -71,14 +71,14 @@ def load_train_data(path):
     return train_samples, test_samples
 
 
-def load_test_data():
+def load_test_data(path):
 
     """
     Load Test JSON data
     :return:
     """
 
-    f = open('test.json', 'r')
+    f = open(path+'/test.json', 'r')
 
     raw_data = json.load(f)
 

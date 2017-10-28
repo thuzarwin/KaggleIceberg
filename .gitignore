@@ -1,3 +1,5 @@
+.model
+.ipynb_checkpoints
 .idea
 *.json
 *.pkl

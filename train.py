@@ -8,21 +8,22 @@ import random
 from model import cnn
 from data import data_process as dp
 import evaluation
+import output
 
 
 def train(batch_size, epoches):
 
     train_data, test_data = dp.load_train_data('data')
 
-    model = cnn.CNNet()
+    model = torch.load('model_params/start.model')#cnn.CNNet()
 
     num_samples = len(train_data)
 
-    learning_rate = 0.0001
+    learning_rate = 0.00001
 
     criterion = torch.nn.CrossEntropyLoss()
-    train_optimizer = optimizer.RMSprop(params=model.parameters(), lr=learning_rate)
-
+    train_optimizer = optimizer.Adam(params=model.parameters(), lr=learning_rate)
+    f = open('test.log', 'w+')
     for i in range(epoches):
         print("Epoch: %s:" % (i + 1))
         random.shuffle(train_data)
@@ -51,12 +52,12 @@ def train(batch_size, epoches):
 
         print("Epoch: %s Loss: %s" % (i, sum_loss/(num_samples/batch_size)))
 
-        torch.save(model, 'model_params/epoch_%s_params' % i)
+        torch.save(model, 'model_params/epoch_%s_params.model' % i)
         labels, result = test(test_data, model)
         acc = evaluation.evaluation(result, labels)
-        with open('test.log', 'w+') as f:
-            f.write("TEST: %s ACC: %s\n" % (i, acc))
+        f.write("TEST: %s ACC: %s\n" % (i, acc))
 
+    f.close()
 
 def test(dataset, model):
 
@@ -87,13 +88,28 @@ def predict(x, model):
     image = Variable(torch.FloatTensor(x))
     image = image.unsqueeze(0)
     prob = model(image)
-
     prob = prob.squeeze(0)
     prob = prob.data.numpy()
 
     return prob[1]
 
 
+def get_predict():
+
+    model = torch.load('model_params/epoch_4_params.model')
+
+    result = []
+    for sample in dp.load_test_data('data'):
+        prob = predict(sample['image'], model)
+        result.append((sample['image_id'], prob))
+
+    output.output('output/submit.csv', result)
+
+
+# if __name__ == '__main__':
+#
+#     train(16, 20)
+
 if __name__ == '__main__':
 
-    train(16, 20)
+    get_predict()
