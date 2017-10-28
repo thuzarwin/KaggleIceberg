@@ -1,0 +1,5 @@
+.idea
+*.json
+*.pkl
+*.csv
+*.pyc
