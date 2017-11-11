@@ -96,7 +96,7 @@ def predict(x, model):
 
 def get_predict():
 
-    model = torch.load('model_params/epoch_4_params.model')
+    model = torch.load('model_params/start.model')
 
     result = []
     for sample in dp.load_test_data('data'):
