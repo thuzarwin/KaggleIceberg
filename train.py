@@ -19,10 +19,11 @@ def train(batch_size, epoches):
 
     num_samples = len(train_data)
 
-    learning_rate = 0.00001
+    learning_rate = 0.00005
 
     criterion = torch.nn.CrossEntropyLoss()
-    train_optimizer = optimizer.Adam(params=model.parameters(), lr=learning_rate)
+    train_optimizer = optimizer.Adam(params=model.parameters(), lr=learning_rate, weight_decay=0.001)
+    #optimizer.Adam(params=model.parameters(), lr=learning_rate)
     f = open('test.log', 'w+')
     for i in range(epoches):
         print("Epoch: %s:" % (i + 1))
@@ -58,6 +59,7 @@ def train(batch_size, epoches):
         f.write("TEST: %s ACC: %s\n" % (i, acc))
 
     f.close()
+
 
 def test(dataset, model):
 
@@ -96,7 +98,7 @@ def predict(x, model):
 
 def get_predict():
 
-    model = torch.load('model_params/start.model')
+    model = torch.load('model_params/epoch_8_params.model')
 
     result = []
     for sample in dp.load_test_data('data'):
