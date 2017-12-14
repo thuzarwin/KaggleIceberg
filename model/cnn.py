@@ -26,7 +26,7 @@ class CNNet(nn.Module):
         self.bn3 = nn.BatchNorm2d(num_features=512)
 
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.fc_1 = nn.Linear(8192, 512)
+        self.fc_1 = nn.Linear(512*9*9, 512)
         self.fc_2 = nn.Linear(512, 64)
         self.out = nn.Linear(64, 2)
 
@@ -51,8 +51,7 @@ class CNNet(nn.Module):
         x = self.bn3(x)
         x = self.pool(x)
         # (16L, 512L, 4L, 4L)
-        x = x.view(x.size()[0], 512*4*4)
-
+        x = x.view(x.size()[0], 512*9*9)
         x = F.leaky_relu(self.fc_1(x), negative_slope=0.2)
         x = F.relu(self.fc_2(x))
         x = F.softmax(self.out(x))
