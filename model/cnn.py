@@ -13,12 +13,12 @@ class CNNet(nn.Module):
 
     def __init__(self):
         super(CNNet, self).__init__()
-        self.conv1_1 = nn.Conv2d(in_channels=2, out_channels=32, kernel_size=6, padding=1)
-        self.conv1_2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5, padding=1)
-        self.conv1_3 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2d(num_features=128)
+        self.conv1_1 = nn.Conv2d(in_channels=2, out_channels=64, kernel_size=5, padding=2)
+        self.conv1_2 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1)
+        self.conv1_3 = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(num_features=256)
 
-        self.conv2_1 = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3)
+        self.conv2_1 = nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, padding=1)
         self.conv2_2 = nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(num_features=512)
 
@@ -41,9 +41,6 @@ class CNNet(nn.Module):
         x = self.pool(x)
         # (16L, 128L, 35L, 35L)
         x = F.leaky_relu(self.conv2_1(x), negative_slope=0.5)
-        # (16L, 256L, 33L, 33L)
-        x = self.pool(x)
-        # (16L, 256L, 16L, 16L)
         x = F.leaky_relu(self.conv2_2(x), negative_slope=0.5)
         # (16L, 512L, 16L, 16L)
         x = self.bn2(x)
@@ -51,10 +48,9 @@ class CNNet(nn.Module):
         # (16L, 512L, 8L, 8L)
         x = F.leaky_relu(self.conv3_2(x), negative_slope=0.5)
         # (16L, 512L, 8L, 8L)
+        x = self.bn3(x)
         x = self.pool(x)
         # (16L, 512L, 4L, 4L)
-        x = self.bn3(x)
-
         x = x.view(x.size()[0], 512*4*4)
 
         x = F.leaky_relu(self.fc_1(x), negative_slope=0.2)

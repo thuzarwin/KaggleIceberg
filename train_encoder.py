@@ -58,4 +58,4 @@ def train_encoder(gpu, batch_size, epoches):
         torch.save(encoder.state_dict(), 'model_params/encoder_%s.model' % i)
 
 
-train_encoder(False ,1, 10)
+train_encoder(False, 1, 10)
